@@ -1,12 +1,12 @@
 <?php
 
-namespace CoffeeCode\Router;
+namespace JPsistemasBR\Router;
 
 /**
- * Class CoffeeCode Router
+ * Class JPsistemasBR Router
  *
- * @author Robson V. Leite <https://github.com/robsonvleite>
- * @package CoffeeCode\Router
+ * @JP Sistemas BR <https://github.com/jpsistemasbr>
+ * @package JPsistemasBR\Router
  */
 class Router extends Dispatch
 {
