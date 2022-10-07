@@ -1,12 +1,12 @@
 <?php
 
-namespace CoffeeCode\Router;
+namespace JPsistemasBR\Router;
 
 /**
- * Class CoffeeCode Dispatch
+ * Class JPsistemasBR Dispatch
  *
- * @author Robson V. Leite <https://github.com/robsonvleite>
- * @package CoffeeCode\Router
+ * @author JP Sistemas BR <https://github.com/jpsistemasbr>
+ * @package JPsistemasBR\Router
  */
 abstract class Dispatch
 {
