@@ -22,7 +22,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Jpsisemasbr\\Router\\": "src"
+            "JPsistemasBR\\Router\\": "src"
         }
     }
 }
