@@ -1,10 +1,10 @@
 <?php
 
-namespace CoffeeCode\Router;
+namespace JPsistemasBR\Router;
 
 /**
  * Trait RouterTrait
- * @package CoffeeCode\Router
+ * @package JPsistemasBR\Router
  */
 trait RouterTrait
 {
