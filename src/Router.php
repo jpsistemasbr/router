@@ -8,16 +8,15 @@ namespace JPsistemasBR\Router;
  * @JP Sistemas BR <https://github.com/jpsistemasbr>
  * @package JPsistemasBR\Router
  */
-class Router extends Dispatch
-{
+class Router extends Dispatch {
+
     /**
      * Router constructor.
      *
      * @param string $projectUrl
      * @param null|string $separator
      */
-    public function __construct(string $projectUrl, ?string $separator = ":")
-    {
+    public function __construct(string $projectUrl, ?string $separator = ":") {
         parent::__construct($projectUrl, $separator);
     }
 
@@ -28,10 +27,10 @@ class Router extends Dispatch
      * @param array|string|null $middleware
      */
     public function get(
-        string $route,
-        callable|string $handler,
-        string $name = null,
-        array|string $middleware = null
+            string $route,
+            callable|string $handler,
+            string $name = null,
+            array|string $middleware = null
     ): void {
         $this->addRoute("GET", $route, $handler, $name, $middleware);
     }
@@ -43,10 +42,10 @@ class Router extends Dispatch
      * @param array|string|null $middleware
      */
     public function post(
-        string $route,
-        callable|string $handler,
-        string $name = null,
-        array|string $middleware = null
+            string $route,
+            callable|string $handler,
+            string $name = null,
+            array|string $middleware = null
     ): void {
         $this->addRoute("POST", $route, $handler, $name, $middleware);
     }
@@ -58,10 +57,10 @@ class Router extends Dispatch
      * @param array|string|null $middleware
      */
     public function put(
-        string $route,
-        callable|string $handler,
-        string $name = null,
-        array|string $middleware = null
+            string $route,
+            callable|string $handler,
+            string $name = null,
+            array|string $middleware = null
     ): void {
         $this->addRoute("PUT", $route, $handler, $name, $middleware);
     }
@@ -73,10 +72,10 @@ class Router extends Dispatch
      * @param array|string|null $middleware
      */
     public function patch(
-        string $route,
-        callable|string $handler,
-        string $name = null,
-        array|string $middleware = null
+            string $route,
+            callable|string $handler,
+            string $name = null,
+            array|string $middleware = null
     ): void {
         $this->addRoute("PATCH", $route, $handler, $name, $middleware);
     }
@@ -88,11 +87,12 @@ class Router extends Dispatch
      * @param array|string|null $middleware
      */
     public function delete(
-        string $route,
-        callable|string $handler,
-        string $name = null,
-        array|string $middleware = null
+            string $route,
+            callable|string $handler,
+            string $name = null,
+            array|string $middleware = null
     ): void {
         $this->addRoute("DELETE", $route, $handler, $name, $middleware);
     }
+
 }

@@ -8,8 +8,8 @@ namespace JPsistemasBR\Router;
  * @author JP Sistemas BR <https://github.com/jpsistemasbr>
  * @package JPsistemasBR\Router
  */
-abstract class Dispatch
-{
+abstract class Dispatch {
+
     use RouterTrait;
 
     /** @var string */
@@ -63,8 +63,7 @@ abstract class Dispatch
      * @param string $projectUrl
      * @param null|string $separator
      */
-    public function __construct(string $projectUrl, ?string $separator = ":")
-    {
+    public function __construct(string $projectUrl, ?string $separator = ":") {
         $this->projectUrl = (substr($projectUrl, "-1") == "/" ? substr($projectUrl, 0, -1) : $projectUrl);
         $this->path = rtrim((filter_input(INPUT_GET, "route", FILTER_DEFAULT) ?? "/"), "/");
         $this->separator = ($separator ?? ":");
@@ -74,8 +73,7 @@ abstract class Dispatch
     /**
      * @return array
      */
-    public function __debugInfo()
-    {
+    public function __debugInfo() {
         return $this->routes;
     }
 
@@ -84,8 +82,7 @@ abstract class Dispatch
      * @param array|null $data
      * @return string|null
      */
-    public function route(string $name, array $data = null): ?string
-    {
+    public function route(string $name, array $data = null): ?string {
         foreach ($this->routes as $http_verb) {
             foreach ($http_verb as $route_item) {
                 if (!empty($route_item["name"]) && $route_item["name"] == $name) {
@@ -100,8 +97,7 @@ abstract class Dispatch
      * @param null|string $namespace
      * @return Dispatch
      */
-    public function namespace(?string $namespace): Dispatch
-    {
+    public function namespace(?string $namespace): Dispatch {
         $this->namespace = ($namespace ? ucwords($namespace) : null);
         return $this;
     }
@@ -110,8 +106,7 @@ abstract class Dispatch
      * @param null|string $group
      * @return Dispatch
      */
-    public function group(?string $group, array|string $middleware = null): Dispatch
-    {
+    public function group(?string $group, array|string $middleware = null): Dispatch {
         $this->group = ($group ? trim($group, "/") : null);
         $this->middleware = $middleware ? [$this->group => $middleware] : null;
         return $this;
@@ -120,31 +115,28 @@ abstract class Dispatch
     /**
      * @return null|array
      */
-    public function data(): ?array
-    {
+    public function data(): ?array {
         return $this->data;
     }
 
     /**
      * @return object|null
      */
-    public function current(): ?object
-    {
-        return (object)array_merge(
-            [
-                "namespace" => $this->namespace,
-                "group" => $this->group,
-                "path" => $this->path
-            ],
-            $this->route ?? []
+    public function current(): ?object {
+        return (object) array_merge(
+                        [
+                            "namespace" => $this->namespace,
+                            "group" => $this->group,
+                            "path" => $this->path
+                        ],
+                        $this->route ?? []
         );
     }
 
     /**
      * @return string
      */
-    public function home(): string
-    {
+    public function home(): string {
         return $this->projectUrl;
     }
 
@@ -152,8 +144,7 @@ abstract class Dispatch
      * @param string $route
      * @param array|null $data
      */
-    public function redirect(string $route, array $data = null): void
-    {
+    public function redirect(string $route, array $data = null): void {
         if ($name = $this->route($route, $data)) {
             header("Location: {$name}");
             exit;
@@ -172,16 +163,14 @@ abstract class Dispatch
     /**
      * @return null|int
      */
-    public function error(): ?int
-    {
+    public function error(): ?int {
         return $this->error;
     }
 
     /**
      * @return bool
      */
-    public function dispatch(): bool
-    {
+    public function dispatch(?bool $debug = false): bool {
         if (empty($this->routes) || empty($this->routes[$this->httpMethod])) {
             $this->error = self::NOT_IMPLEMENTED;
             return false;
@@ -193,7 +182,13 @@ abstract class Dispatch
                 $this->route = $route;
             }
         }
-
-        return $this->execute();
+        if ($debug) {
+            echo "<pre>";
+            return $this->execute();
+            echo "</pre>";
+        } else {
+            return $this->execute();
+        }
     }
+
 }
