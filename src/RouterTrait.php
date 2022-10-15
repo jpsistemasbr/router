@@ -38,6 +38,7 @@ trait RouterTrait
         }
 
         $route = (!$this->group ? $route : "/{$this->group}{$route}");
+        $this->data['method'] = $method;
         $data = $this->data;
         $namespace = $this->namespace;
         $middleware = $middleware ?? (!empty($this->middleware[$this->group]) ? $this->middleware[$this->group] : null);
