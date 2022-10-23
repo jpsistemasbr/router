@@ -42,6 +42,8 @@ abstract class Dispatch {
     /** @var array|null */
     protected ?array $data = null;
 
+     /** @var array|null */
+     protected ?array $data_middleware = null;
     /** @var int */
     protected ?int $error = null;
 
@@ -117,6 +119,12 @@ abstract class Dispatch {
      */
     public function data(): ?array {
         return $this->data;
+    }
+     /**
+     * @return null|array
+     */
+    public function dataMiddlewares(): ?array {
+        return $this->data_middleware;
     }
 
     /**

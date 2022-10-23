@@ -27,27 +27,26 @@ trait RouterTrait
         $removeGroupFromPath = $this->group ? str_replace($this->group, "", $this->path) : $this->path;
         $pathAssoc = trim($removeGroupFromPath, "/");
         $routeAssoc = trim($route, "/");
-
         preg_match_all("~\{\s* ([a-zA-Z_][a-zA-Z0-9_-]*) \}~x", $routeAssoc, $keys, PREG_SET_ORDER);
         $routeDiff = array_values(array_diff_assoc(explode("/", $pathAssoc), explode("/", $routeAssoc)));
-
         $this->formSpoofing();
         $offset = 0;
         foreach ($keys as $key) {
             $this->data[$key[1]] = ($routeDiff[$offset++] ?? null);
         }
-
         $route = (!$this->group ? $route : "/{$this->group}{$route}");
         $this->data['method'] = $method;
         $data = $this->data;
         $namespace = $this->namespace;
         $middleware = $middleware ?? (!empty($this->middleware[$this->group]) ? $this->middleware[$this->group] : null);
-        $router = function () use ($method, $handler, $data, $route, $name, $namespace, $middleware) {
+        $data_middleware = $this->data_middleware;
+        $router = function () use ($method, $handler, $data, $route, $name, $namespace, $middleware, $data_middleware) {
             return [
                 "route" => $route,
                 "name" => $name,
                 "method" => $method,
                 "middlewares" => $middleware,
+                "dataMiddlewares" => $data_middleware,
                 "handler" => $this->handler($handler, $namespace),
                 "action" => $this->action($handler),
                 "data" => $data
@@ -64,18 +63,15 @@ trait RouterTrait
     protected function formSpoofing(): void
     {
         $post = filter_input_array(INPUT_POST, FILTER_DEFAULT);
-
         if (!empty($post['_method']) && in_array($post['_method'], ["PUT", "PATCH", "DELETE"])) {
             $this->httpMethod = $post['_method'];
             $this->data = $post;
-
             unset($this->data["_method"]);
             return;
         }
 
         if ($this->httpMethod == "POST") {
             $this->data = filter_input_array(INPUT_POST, FILTER_DEFAULT);
-
             unset($this->data["_method"]);
             return;
         }
@@ -83,7 +79,6 @@ trait RouterTrait
         if (in_array($this->httpMethod, ["PUT", "PATCH", "DELETE"]) && !empty($_SERVER['CONTENT_LENGTH'])) {
             parse_str(file_get_contents('php://input', false, null, 0, $_SERVER['CONTENT_LENGTH']), $putPatch);
             $this->data = $putPatch;
-
             unset($this->data["_method"]);
             return;
         }
@@ -96,8 +91,12 @@ trait RouterTrait
      */
     private function execute(): bool
     {
+
         if ($this->route) {
-            if (!$this->middleware()) {
+            $middleware = $this->middleware();
+            if ($middleware) {
+                $this->route['dataMiddlewares'] = $middleware;
+            } else {
                 return false;
             }
 
@@ -131,7 +130,7 @@ trait RouterTrait
     /**
      * @return bool
      */
-    private function middleware(): bool
+    private function middleware(): array|bool
     {
         if (empty($this->route["middlewares"])) {
             return true;
@@ -141,13 +140,18 @@ trait RouterTrait
             $this->route["middlewares"]
         ) ? $this->route["middlewares"] : [$this->route["middlewares"]];
 
+        $data_middleware = false;
         foreach ($middlewares as $middleware) {
             if (class_exists($middleware)) {
+                $class = explode("/", str_replace('\\', '/', $middleware));
+                $class = array_pop($class);
                 $newMiddleware = new $middleware;
                 if (method_exists($newMiddleware, "handle")) {
-                    if (!$newMiddleware->handle($this)) {
+                    $reponse = $newMiddleware->handle($this);
+                    if (!$reponse) {
                         return false;
                     }
+                    $this->data_middleware[$class] = $reponse;
                 } else {
                     $this->error = self::METHOD_NOT_ALLOWED;
                     return false;
@@ -157,8 +161,7 @@ trait RouterTrait
                 return false;
             }
         }
-
-        return true;
+        return  $this->data_middleware;
     }
 
     /**
