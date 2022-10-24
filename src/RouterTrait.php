@@ -24,6 +24,7 @@ trait RouterTrait
     ): void {
         $route = rtrim($route, "/");
 
+
         $removeGroupFromPath = $this->group ? str_replace($this->group, "", $this->path) : $this->path;
         $pathAssoc = trim($removeGroupFromPath, "/");
         $routeAssoc = trim($route, "/");
@@ -91,7 +92,6 @@ trait RouterTrait
      */
     private function execute(): bool
     {
-
         if ($this->route) {
             $middleware = $this->middleware();
             if ($middleware) {
@@ -122,7 +122,6 @@ trait RouterTrait
             $this->error = self::BAD_REQUEST;
             return false;
         }
-
         $this->error = self::NOT_FOUND;
         return false;
     }
