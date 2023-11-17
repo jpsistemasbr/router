@@ -70,7 +70,11 @@ trait RouterTrait
             unset($this->data["_method"]);
             return;
         }
-
+         if ($this->httpMethod == "GET") {
+            $this->data = filter_input_array(INPUT_GET, FILTER_DEFAULT);
+            unset($this->data["_method"]);
+            return;
+        }
         if ($this->httpMethod == "POST") {
             $this->data = filter_input_array(INPUT_POST, FILTER_DEFAULT);
             unset($this->data["_method"]);
